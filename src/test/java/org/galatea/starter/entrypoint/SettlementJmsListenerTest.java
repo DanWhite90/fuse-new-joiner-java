@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import javax.jms.TextMessage;
+import jakarta.jms.TextMessage;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

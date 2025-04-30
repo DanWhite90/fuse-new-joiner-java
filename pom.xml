@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>11</java.version>
+		<java.version>21</java.version>
 		<jaxb.api.version>2.3.1</jaxb.api.version>
 		<!-- VM and application args used during maven steps, e.g. mvn test -->
 		<!-- Use log config that writes to stdout so that application logs during tests show up in Jenkins build logs -->
@@ -20,6 +20,7 @@
 			-Dapplication.name=${project.artifactId}
 			-Dlog4j.configurationFile=log4j2-test.yml
 			-Dserver.port=8080
+			--add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED
 		</argLine>
 		<sonar.exclusions>**/ProtobufMessages.java</sonar.exclusions>
 		<sonar.coverage.exclusions>
@@ -36,13 +37,26 @@
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<!-- Allow us to skip Unit Tests only, if need be, with -Dskip.surefire.tests, but retain the skip all tests functionality of -DskipTests -->
 		<skip.surefire.tests>${skipTests}</skip.surefire.tests>
+		<spring-cloud.version>2024.0.0</spring-cloud.version>
 	</properties>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.0.RELEASE</version>
+		<version>3.4.5</version>
 	</parent>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<!-- Spring boot starter -->
@@ -67,14 +81,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
-			<version>2.0.1.RELEASE</version>
 		</dependency>
 
-		<!--Spring Cloud Sleuth for distributed log tracing-->
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-sleuth</artifactId>
-			<version>2.2.1.RELEASE</version>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-tracing</artifactId>
 		</dependency>
 
 		<!-- Required for log4j to process log4j2.yml -->
@@ -146,7 +157,7 @@
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
-			<version>3.16.1</version>
+			<version>4.28.2</version>
 		</dependency>
 
 		<dependency>
@@ -164,25 +175,21 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-csv</artifactId>
-			<version>2.8.8</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.9.9</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.9.9</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.10.8</version>
 		</dependency>
 
 		<!-- JAXB - converting between POJOs and XML -->
@@ -264,32 +271,24 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>4.1.0</version>
+			<version>4.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>4.1.0</version>
+			<version>5.4.0</version>
 		</dependency>
 
-		<!-- Ehcache for caching. Having ehcache.xml in src/main/resources tells SpringBoot to use EhCache as the caching implementation for @Cacheable -->
 		<dependency>
-			<groupId>net.sf.ehcache</groupId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
-		</dependency>
-
-		<!-- Spring caching framework inside this -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>5.1.2.RELEASE</version>
-		</dependency>
-
-		<!-- Support for Ehcache and others -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>5.1.2.RELEASE</version>
+			<version>3.10.8</version>
+			<classifier>jakarta</classifier>
 		</dependency>
 
     <dependency>
@@ -313,14 +312,13 @@
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
 			<artifactId>wiremock-jre8</artifactId>
-			<version>2.24.1</version>
+			<version>2.35.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<groupId>org.springframework.cloud</groupId>
 			<scope>test</scope>
-			<version>2.0.1.RELEASE</version>
 		</dependency>
 		<!-- Useful for waiting for an async task to complete -->
 		<dependency>
@@ -388,6 +386,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<argLine>--add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</argLine>
 					<excludedGroups>org.galatea.starter.IntegrationTestCategory</excludedGroups>
 					<!-- skips surefire tests without skipping failsafe tests. Property 
 						value seems to magically default to false -->

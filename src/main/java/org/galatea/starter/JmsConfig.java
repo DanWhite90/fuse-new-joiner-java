@@ -1,8 +1,8 @@
 package org.galatea.starter;
 
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Message;
 import java.util.function.BiConsumer;
-import javax.jms.ConnectionFactory;
-import javax.jms.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.galatea.starter.utils.jms.FuseJmsListenerContainerFactory;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;

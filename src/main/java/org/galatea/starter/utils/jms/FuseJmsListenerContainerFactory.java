@@ -1,7 +1,7 @@
 package org.galatea.starter.utils.jms;
 
+import jakarta.jms.Message;
 import java.util.function.BiConsumer;
-import javax.jms.Message;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
