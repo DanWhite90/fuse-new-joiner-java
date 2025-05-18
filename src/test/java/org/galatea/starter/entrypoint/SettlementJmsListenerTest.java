@@ -3,10 +3,10 @@ package org.galatea.starter.entrypoint;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
+import jakarta.jms.TextMessage;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import jakarta.jms.TextMessage;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -20,9 +20,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class SettlementJmsListenerTest extends ASpringTest {
   @Autowired
   protected JmsTemplate jmsTemplate;
 
-  @MockBean
+  @MockitoBean
   private SettlementService mockSettlementService;
 
   @Value("${jms.agreement-queue-json}")

@@ -9,7 +9,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.aspect4log.Log;
 import net.sf.aspect4log.Log.Level;
-import org.galatea.starter.MvcConfig;
+import org.galatea.starter.config.MvcConfig;
 import org.galatea.starter.domain.SettlementMission;
 import org.galatea.starter.domain.TradeAgreement;
 import org.galatea.starter.entrypoint.exception.EntityNotFoundException;
@@ -33,8 +33,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * REST Controller that generates and listens to http endpoints which allow the caller to create
- * Missions from TradeAgreements and query them back out.
+ * REST Controller that generates and listens to http endpoints which allow the caller to create Missions from
+ * TradeAgreements and query them back out.
  */
 @Slf4j
 @Log(enterLevel = Level.INFO, exitLevel = Level.INFO)
@@ -58,9 +58,9 @@ public class SettlementRestController extends BaseSettlementRestController {
   private String getMissionPath;
 
   /**
-   * Initializes a new instance of this class with the required arguments that will be autowired by
-   * spring boot. This constructor was manually added because of the base class that has no default
-   * constructor, necessitating a call to super() from here.
+   * Initializes a new instance of this class with the required arguments that will be autowired by spring boot. This
+   * constructor was manually added because of the base class that has no default constructor, necessitating a call to
+   * super() from here.
    */
   public SettlementRestController(final SettlementService settlementService,
       final ITranslator<TradeAgreementMessages, List<TradeAgreement>> tradeAgreementTranslator,

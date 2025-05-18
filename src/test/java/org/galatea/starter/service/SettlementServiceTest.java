@@ -15,21 +15,21 @@ import java.util.Set;
 import org.galatea.starter.ASpringTest;
 import org.galatea.starter.domain.SettlementMission;
 import org.galatea.starter.domain.TradeAgreement;
-import org.galatea.starter.domain.rpsy.ISettlementMissionRpsy;
 import org.galatea.starter.entrypoint.exception.EntityNotFoundException;
+import org.galatea.starter.persistence.repository.SettlementMissionRepository;
 import org.galatea.starter.testutils.TestDataGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 public class SettlementServiceTest extends ASpringTest {
 
-  @MockBean
-  private ISettlementMissionRpsy mockSettlementMissionRpsy;
+  @MockitoBean
+  private SettlementMissionRepository mockSettlementMissionRpsy;
 
-  @MockBean
-  private IAgreementTransformer mockAgreementTransformer;
+  @MockitoBean
+  private AgreementTransformer mockAgreementTransformer;
 
   private SettlementService service;
 

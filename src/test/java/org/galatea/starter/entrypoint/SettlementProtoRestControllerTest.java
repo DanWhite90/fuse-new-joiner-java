@@ -14,7 +14,7 @@ import junitparams.JUnitParamsRunner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.galatea.starter.ASpringTest;
-import org.galatea.starter.ProtoMessageTranslationConfig;
+import org.galatea.starter.config.ProtoMessageTranslationConfig;
 import org.galatea.starter.domain.SettlementMission;
 import org.galatea.starter.domain.TradeAgreement;
 import org.galatea.starter.entrypoint.messagecontracts.ProtobufMessages.SettlementMissionProtoMessage;
@@ -28,14 +28,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 /**
- * Tests for the protobuf controller. Right now this doesn't test the exception scenarios as there
- * is a problem serializing ResponseBody<> to protobuf. I need to investigate this a bit further.
+ * Tests for the protobuf controller. Right now this doesn't test the exception scenarios as there is a problem
+ * serializing ResponseBody<> to protobuf. I need to investigate this a bit further.
  */
 @RequiredArgsConstructor
 @Slf4j
@@ -56,7 +56,7 @@ public class SettlementProtoRestControllerTest extends ASpringTest {
   @Autowired
   private MockMvc mvc;
 
-  @MockBean
+  @MockitoBean
   private SettlementService mockSettlementService;
 
   private static final Long MISSION_ID_1 = 100L;
@@ -78,8 +78,8 @@ public class SettlementProtoRestControllerTest extends ASpringTest {
         .willReturn(Sets.newTreeSet(singletonList(expectedId)));
 
     MvcResult result = this.mvc.perform(
-        post("/settlementEngine?requestId=1234").contentType(APPLICATION_X_PROTOBUF)
-            .accept(APPLICATION_X_PROTOBUF).content(messages.toByteArray()))
+            post("/settlementEngine?requestId=1234").contentType(APPLICATION_X_PROTOBUF)
+                .accept(APPLICATION_X_PROTOBUF).content(messages.toByteArray()))
         .andExpect(status().isOk()).andReturn();
 
     SettlementResponseProtoMessage received = SettlementResponseProtoMessage
@@ -112,8 +112,8 @@ public class SettlementProtoRestControllerTest extends ASpringTest {
     given(this.mockSettlementService.findMission(MISSION_ID_1)).willReturn(Optional.empty());
 
     this.mvc.perform(
-        get("/settlementEngine/mission/" + MISSION_ID_1 + "?requesId=1234")
-            .accept(APPLICATION_X_PROTOBUF))
+            get("/settlementEngine/mission/" + MISSION_ID_1 + "?requesId=1234")
+                .accept(APPLICATION_X_PROTOBUF))
         .andExpect(status().is4xxClientError());
   }
 }

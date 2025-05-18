@@ -1,5 +1,7 @@
 package org.galatea.starter.service;
 
+import static java.util.stream.Collectors.toUnmodifiableSet;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.util.HashSet;
@@ -15,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.aspect4log.Log;
 import org.galatea.starter.domain.SettlementMission;
 import org.galatea.starter.domain.TradeAgreement;
-import org.galatea.starter.domain.rpsy.ISettlementMissionRpsy;
 import org.galatea.starter.entrypoint.exception.EntityNotFoundException;
+import org.galatea.starter.persistence.repository.SettlementMissionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -28,10 +30,10 @@ import org.springframework.validation.annotation.Validated;
 public class SettlementService {
 
   @NonNull
-  ISettlementMissionRpsy missionrpsy;
+  SettlementMissionRepository missionRepository;
 
   @NonNull
-  IAgreementTransformer agreementTransformer;
+  AgreementTransformer agreementTransformer;
 
   /**
    * Create missions based on the agreements provided.
@@ -42,14 +44,18 @@ public class SettlementService {
   public Set<Long> spawnMissions(@Valid final List<TradeAgreement> agreements) {
 
     // Map each agreement to a mission, collect to a list, and then same in bulk
-    Iterable<SettlementMission> savedMissions = missionrpsy.saveAll(agreements.stream()
-        .map(agr -> agreementTransformer.transform(agr)).collect(Collectors.toList()));
+    Iterable<SettlementMission> savedMissions = missionRepository.saveAll(agreements.stream()
+        .map(agreement -> agreementTransformer.transform(agreement))
+        .toList());
+
     log.debug("The following missions were saved: {}", savedMissions);
 
     // We have to do all of this StreamSupport crap since the repository returns an iterable instead
     // of a normal collection
     Set<Long> idSet = StreamSupport.stream(savedMissions.spliterator(), false)
-        .map(SettlementMission::getId).collect(Collectors.toSet());
+        .map(SettlementMission::getId)
+        .collect(toUnmodifiableSet());
+
     log.info("Returning {} mission id(s)", idSet.size());
 
     return idSet;
@@ -63,7 +69,8 @@ public class SettlementService {
    */
   public Optional<SettlementMission> findMission(final Long id) {
     log.info("Retrieving settlement mission with id {}", id);
-    return missionrpsy.findById(id);
+
+    return missionRepository.findById(id);
   }
 
   /**
@@ -74,7 +81,7 @@ public class SettlementService {
   public List<SettlementMission> findMissions(final List<Long> ids) {
     log.info("Retrieving settlement missions with ids: {}", ids);
 
-    List<SettlementMission> retrievedMissions = Lists.newArrayList(missionrpsy.findAllById(ids));
+    List<SettlementMission> retrievedMissions = Lists.newArrayList(missionRepository.findAllById(ids));
 
     // CrudRepository.findAll(Iterable ids) succeeds even if some provided IDs aren't found, so
     // if we want to alert on any not-found IDs we have to manually check
@@ -82,6 +89,7 @@ public class SettlementService {
         .map(SettlementMission::getId)
         .collect(Collectors.toSet());
     Sets.SetView<Long> missingMissions = Sets.difference(new HashSet<>(ids), retrievedMissionIds);
+
     if (!missingMissions.isEmpty()) {
       throw new EntityNotFoundException(SettlementMission.class, missingMissions);
     }
@@ -92,13 +100,13 @@ public class SettlementService {
   /**
    * Update the mission with the given ID.
    *
-   * @param id identifier of the mission
+   * @param id      identifier of the mission
    * @param mission the mission to update
    * @return optional containing the saved mission
    */
   public Optional<SettlementMission> updateMission(final Long id, final SettlementMission mission) {
     mission.setId(id);
-    SettlementMission savedMission = missionrpsy.save(mission);
+    SettlementMission savedMission = missionRepository.save(mission);
     log.info("The following mission was updated: {}", savedMission);
     return Optional.ofNullable(savedMission);
   }
@@ -110,17 +118,16 @@ public class SettlementService {
    * @return does a mission with the id exist?
    */
   public boolean missionExists(final Long id) {
-    return missionrpsy.existsById(id);
+    return missionRepository.existsById(id);
   }
 
   /**
-   * Delete the mission by ID.
-   * This removes the mission from the cache as well.
+   * Delete the mission by ID. This removes the mission from the cache as well.
    *
    * @param id identifier of the mission to delete
    */
   public void deleteMission(final Long id) {
-    missionrpsy.deleteById(id);
+    missionRepository.deleteById(id);
     log.info("Mission with id '{}' was deleted", id);
   }
 }

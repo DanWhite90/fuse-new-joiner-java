@@ -1,17 +1,9 @@
-package org.galatea.starter;
+package org.galatea.starter.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Sets;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.galatea.starter.utils.FuseHttpTraceRepository;
 import org.galatea.starter.utils.http.converter.SettlementMissionCsvConverter;
 import org.galatea.starter.utils.http.converter.SettlementMissionXlsxConverter;
-import org.galatea.starter.utils.rest.FuseHttpTraceFilter;
-import org.springframework.boot.actuate.trace.http.HttpExchangeTracer;
-import org.springframework.boot.actuate.trace.http.Include;
-import org.springframework.boot.actuate.web.trace.servlet.HttpTraceFilter;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -33,36 +25,6 @@ public class MvcConfig implements WebMvcConfigurer {
   public static final MediaType APPLICATION_EXCEL = new MediaType("application", "vnd.ms-excel");
   public static final String APPLICATION_EXCEL_VALUE = "application/vnd.ms-excel";
 
-  /**
-   * This is used to trace web requests and store that trace info.
-   *
-   * @return the trace filter
-   */
-  @Bean
-  public HttpTraceFilter httpTraceFilter() {
-    return new FuseHttpTraceFilter(fuseHttpTraceRepository(), httpExchangeTracer(),
-        path -> path.startsWith("/trace"));
-  }
-
-  /**
-   * Repository for storing trace info.
-   */
-  @Bean
-  public FuseHttpTraceRepository fuseHttpTraceRepository() {
-    return new FuseHttpTraceRepository(new ObjectMapper());
-  }
-
-  /**
-   * Object that performs the actual tracing of an HTTP exchange.
-   *
-   * @return the exchange tracer
-   */
-  @Bean
-  public HttpExchangeTracer httpExchangeTracer() {
-    // Trace everything!
-    return new HttpExchangeTracer(Sets.newHashSet(Include.values()));
-  }
-
   @Override
   public void configureContentNegotiation(final ContentNegotiationConfigurer configurer) {
     configurer.favorParameter(true) // give precedence to url request parameters
@@ -78,7 +40,6 @@ public class MvcConfig implements WebMvcConfigurer {
     configurer.mediaType("xml", MediaType.APPLICATION_XML);
     configurer.mediaType("csv", TEXT_CSV);
     configurer.mediaType("xlsx", APPLICATION_EXCEL);
-
   }
 
   @Override

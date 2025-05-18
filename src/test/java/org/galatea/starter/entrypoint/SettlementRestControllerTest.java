@@ -2,8 +2,8 @@ package org.galatea.starter.entrypoint;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static java.util.Collections.singletonList;
-import static org.galatea.starter.MvcConfig.APPLICATION_EXCEL;
-import static org.galatea.starter.MvcConfig.TEXT_CSV;
+import static org.galatea.starter.config.MvcConfig.APPLICATION_EXCEL;
+import static org.galatea.starter.config.MvcConfig.TEXT_CSV;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertTrue;
@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,13 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Marshaller;
 import junitparams.FileParameters;
 import junitparams.JUnitParamsRunner;
 import lombok.extern.slf4j.Slf4j;
 import org.galatea.starter.ASpringTest;
-import org.galatea.starter.MessageTranslationConfig;
+import org.galatea.starter.config.MessageTranslationConfig;
 import org.galatea.starter.domain.SettlementMission;
 import org.galatea.starter.domain.TradeAgreement;
 import org.galatea.starter.entrypoint.messagecontracts.SettlementMissionList;
@@ -52,7 +52,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
 import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -64,6 +63,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.ParameterContentNegotiationStrategy;
@@ -98,7 +98,7 @@ public class SettlementRestControllerTest
   @Autowired
   private ITranslator<SettlementMissionMessage, SettlementMission> settlementMissionMsgTranslator;
 
-  @MockBean
+  @MockitoBean
   private SettlementService mockSettlementService;
 
   @Autowired
@@ -182,8 +182,8 @@ public class SettlementRestControllerTest
   @Test
   public void testSettleAgreement_XML() throws Exception {
     TradeAgreementMessages messages = TradeAgreementMessages.builder().agreement(
-        TradeAgreementMessage.builder().instrument("IBM").internalParty("INT-1")
-            .externalParty("EXT-1").buySell("B").qty(100d).build())
+            TradeAgreementMessage.builder().instrument("IBM").internalParty("INT-1")
+                .externalParty("EXT-1").buySell("B").qty(100d).build())
         .build();
 
     JAXBContext context = JAXBContext.newInstance(TradeAgreementMessages.class);
@@ -301,7 +301,7 @@ public class SettlementRestControllerTest
         .then()
         .log().ifValidationFails()
         .statusCode(HttpStatus.OK.value())
-        .content(is(objectMapper.writeValueAsString(new SettlementMissionList(missions))));
+        .body(is(objectMapper.writeValueAsString(new SettlementMissionList(missions))));
   }
 
   @Test
@@ -375,18 +375,17 @@ public class SettlementRestControllerTest
 
     byte[] expectedXlsx = readBytes("SettlementMissions.xlsx");
 
-
     MockMvcResponse response =
-    given()
-        .log().ifValidationFails()
-        .when()
-        .get("/settlementEngine/missions?ids=1,2&format=xlsx&requestId=1234")
-        .then()
-        .log().ifValidationFails()
-        .statusCode(HttpStatus.OK.value())
-        .contentType("application/vnd.ms-excel")
-        .extract()
-        .response();
+        given()
+            .log().ifValidationFails()
+            .when()
+            .get("/settlementEngine/missions?ids=1,2&format=xlsx&requestId=1234")
+            .then()
+            .log().ifValidationFails()
+            .statusCode(HttpStatus.OK.value())
+            .contentType("application/vnd.ms-excel")
+            .extract()
+            .response();
 
     // Directly comparing the spreadsheet bytes fails even when the expected spreadsheet appears to
     // be an exact copy of the actual result, so instead compare the spreadsheet contents logically
