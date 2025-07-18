@@ -61,7 +61,9 @@ logging.level.org.springframework.boot.autoconfigure: INFO
 ---
 # Test properties go here
 spring:
-  profiles: test
+  config:
+    activate:
+      on-profile: test
   datasource:
     username: sa
     password:
@@ -72,7 +74,9 @@ spring:
 ---
 # Dev properties go here
 spring:
-  profiles: dev
+  config:
+    activate:
+      on-profile: dev
   datasource:
     username: sa
     password:
@@ -84,7 +88,9 @@ debug: true
 ---
 # UAT properties go here
 spring:
-  profiles: uat
+  config:
+    activate:
+      on-profile: uat
   datasource:
     username: sa
     password:
