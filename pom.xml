@@ -225,6 +225,10 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-tracing-bridge-otel</artifactId>
 		</dependency>
@@ -243,6 +247,12 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.33</version>
 		</dependency>
 
 		<!-- Lombok for tostring, hashcode, etc -->
@@ -291,10 +301,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-			<version>3.10.8</version>
-			<classifier>jakarta</classifier>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+			<version>3.1.8</version>
 		</dependency>
 
 		<dependency>
@@ -404,9 +413,10 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<argLine>--add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</argLine>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
 					<excludedGroups>org.galatea.starter.IntegrationTestCategory</excludedGroups>
-					<!-- skips surefire tests without skipping failsafe tests. Property 
-						value seems to magically default to false -->
 					<!-- See https://stackoverflow.com/questions/6612344/prevent-unit-tests-in-maven-but-allow-integration-tests -->
 					<skipTests>${skip.surefire.tests}</skipTests>
 				</configuration>
@@ -422,8 +432,16 @@
 				</configuration>
 				<executions>
 					<execution>
+						<id>integration-tests</id>
+						<phase>integration-test</phase>
 						<goals>
 							<goal>integration-test</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<phase>verify</phase>
+						<goals>
 							<goal>verify</goal>
 						</goals>
 					</execution>

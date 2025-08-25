@@ -2,7 +2,6 @@ package org.galatea.starter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.ehcache.Cache;
 import org.galatea.starter.config.AppConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +28,6 @@ public class AppConfigTest {
     org.springframework.cache.Cache springCache = springCacheManager.getCache("missions");
 
     assertThat(springCache).isNotNull();
-    assertThat(springCache.getNativeCache()).isInstanceOf(Cache.class);
+    assertThat(springCache.getNativeCache()).isInstanceOf(com.github.benmanes.caffeine.cache.Cache.class);
   }
 }

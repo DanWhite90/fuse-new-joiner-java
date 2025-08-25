@@ -16,11 +16,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    database-platform: org.hibernate.dialect.MySQL5Dialect
   cache:
-    type: ehcache
-    ehcache:
-      config: classpath:ehcache.xml
+    type: caffeine
+    cache-names: "missions"
+    caffeine:
+      spec: "maximumSize=16384,expireAfterWrite=1200s"
 
 springdoc:
   api-docs:

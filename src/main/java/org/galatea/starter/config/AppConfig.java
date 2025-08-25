@@ -1,11 +1,14 @@
 package org.galatea.starter.config;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import feign.Logger;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.aspect4log.aspect.LogAspect;
 import org.galatea.starter.domain.SettlementMission;
 import org.galatea.starter.service.AgreementTransformer;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +49,16 @@ public class AppConfig {
   @Bean
   public Logger.Level logLevel() {
     return Logger.Level.BASIC;
+  }
+
+  // Manually added instead of using application properties because tests ignore it
+  @Bean
+  public CacheManager cacheManager() {
+    CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+    cacheManager.setCaffeine(Caffeine.newBuilder()
+        .maximumSize(16384)
+        .expireAfterAccess(20, java.util.concurrent.TimeUnit.MINUTES));
+    return cacheManager;
   }
 
 }
