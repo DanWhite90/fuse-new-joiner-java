@@ -18,7 +18,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Configuration
 @EnableAspectJAutoProxy
 @EnableCaching
-@EnableFeignClients
+@EnableFeignClients(basePackages = "org.galatea.starter.service")
 public class AppConfig {
 
   /**
