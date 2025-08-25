@@ -51,7 +51,15 @@ public class AppConfig {
     return Logger.Level.BASIC;
   }
 
-  // Manually added instead of using application properties because tests ignore it
+  /**
+   * Manually added instead of using application properties because tests ignore it.
+   *
+   * <p>Example configuration:
+   * spring.cache.type=caffeine
+   * spring.cache.caffeine.spec=maximumSize=16384,expireAfterAccess=20m</p>
+   *
+   * @return caffeine CacheManager
+   */
   @Bean
   public CacheManager cacheManager() {
     CaffeineCacheManager cacheManager = new CaffeineCacheManager();
