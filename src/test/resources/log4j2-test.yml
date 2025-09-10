@@ -1,7 +1,7 @@
 # Defines the console appender and links it to the root logger
 # Defines some logger level overrides, useful when debugging/testing locally
 
-# Can specify using this configuration along with log4j2.yml via: -Dlog4j.configurationFile=log4j2.yml,log4j2-test.yml
+# Can specify using this configuration along with log4j2-spring.xml via: -Dlog4j.configurationFile=log4j2-spring.xml,log4j2-test.yml
 
 Configuration:
   name: Default  

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="Default">
+  <!-- Properties -->
+  <Properties>
+    <Property name="log-file-prefix">${date:yyyyMMddHHmmss}.${spring:application.name}</Property>
+    <Property name="log-dir">${spring:application.log-dir}</Property>
+    <Property name="log-archive-dir">${spring:application.log-archive-root-dir}/%d{yyyyMMdd}</Property>
+    <Property name="zip-suffix">%d{yyyyMMdd.HH}.%i.log.gz</Property>
+    <Property name="log-pattern">%d{yyyy.MM.dd HH:mm:ss.SSS} [%t] %-5level [%X{X-B3-TraceId}/%X{X-B3-SpanId}]
+      %logger{1.} - %X{internal-request-id}%X{external-request-id}%msg%n%xThrowable{separator(|)}
+    </Property>
+  </Properties>
+
+  <!-- Appenders -->
+  <Appenders>
+    <!-- Console Appender -->
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout
+        pattern="%d{yyyy.MM.dd HH:mm:ss.SSS} [%t] %-5level %logger{1.} - %X{internal-request-id}%X{external-request-id}%msg%n%xThrowable{separator(|)}"/>
+    </Console>
+
+    <!-- RollingFile Appender -->
+    <RollingFile name="RollingFileAppender" fileName="${log-dir}/${log-file-prefix}.log"
+      filePattern="${log-archive-dir}/${log-file-prefix}.${zip-suffix}"
+      createOnDemand="true">
+      <PatternLayout pattern="${log-pattern}"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="100 MB"/>
+        <OnStartupTriggeringPolicy/>
+      </Policies>
+    </RollingFile>
+
+    <!-- WarnRollingFile Appender -->
+    <RollingFile name="WarnRollingFileAppender" fileName="${log-dir}/${log-file-prefix}.warnings.log"
+      filePattern="${log-archive-dir}/${log-file-prefix}.warnings.${zip-suffix}"
+      createOnDemand="true">
+      <PatternLayout pattern="${log-pattern}"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="100 MB"/>
+        <OnStartupTriggeringPolicy/>
+      </Policies>
+      <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+    </RollingFile>
+
+    <!-- ErrorRollingFile Appender -->
+    <RollingFile name="ErrorRollingFileAppender" fileName="${log-dir}/${log-file-prefix}.errors.log"
+      filePattern="${log-archive-dir}/${log-file-prefix}.errors.${zip-suffix}"
+      createOnDemand="true">
+      <PatternLayout pattern="${log-pattern}"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="100 MB"/>
+        <OnStartupTriggeringPolicy/>
+      </Policies>
+      <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+    </RollingFile>
+
+    <!-- RestRequestRollingFile Appender -->
+    <RollingFile name="RestRequestRollingFileAppender" fileName="${log-dir}/${log-file-prefix}.rest.log"
+      filePattern="${log-archive-dir}/${log-file-prefix}.rest.${zip-suffix}"
+      createOnDemand="true">
+      <PatternLayout pattern="${log-pattern}"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+        <SizeBasedTriggeringPolicy size="100 MB"/>
+        <OnStartupTriggeringPolicy/>
+      </Policies>
+    </RollingFile>
+
+    <!-- Async Appenders -->
+    <Async name="AsyncAppender" bufferSize="50000">
+      <AppenderRef ref="RollingFileAppender"/>
+      <AppenderRef ref="WarnRollingFileAppender"/>
+      <AppenderRef ref="ErrorRollingFileAppender"/>
+    </Async>
+    <Async name="AsyncRestRequestAppender" bufferSize="50000">
+      <AppenderRef ref="RestRequestRollingFileAppender"/>
+    </Async>
+  </Appenders>
+
+  <!-- Loggers -->
+  <Loggers>
+    <!-- Root Logger -->
+    <Root level="info">
+      <AppenderRef ref="AsyncAppender"/>
+      <AppenderRef ref="Console"/>
+    </Root>
+
+    <!-- Specific Logger -->
+    <Logger name="org.galatea.starter.entrypoint.SettlementRestController" level="debug">
+      <AppenderRef ref="AsyncRestRequestAppender"/>
+    </Logger>
+
+    <!-- Turn off Spring auto-configuration debug-level logging -->
+    <Logger name="org.springframework.boot.autoconfigure.logging.AutoConfigurationReportLoggingInitializer"
+      level="info"/>
+  </Loggers>
+</Configuration>
