@@ -1,0 +1,9 @@
+[
+  {
+    "interfaces": [
+      "org.springframework.jms.connection.SessionProxy",
+      "jakarta.jms.QueueSession",
+      "jakarta.jms.TopicSession"
+    ]
+  }
+]

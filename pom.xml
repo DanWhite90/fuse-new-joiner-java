@@ -528,6 +528,11 @@
             <groupId>org.graalvm.buildtools</groupId>
             <artifactId>native-maven-plugin</artifactId>
             <version>${native.buildtools.version}</version>
+            <configuration>
+              <buildArgs>
+                <buildArg>-H:DynamicProxyConfigurationFiles=META-INF/native-image/dynamic-proxy-config.json</buildArg>
+              </buildArgs>
+            </configuration>
             <extensions>true</extensions>
             <executions>
               <execution>
