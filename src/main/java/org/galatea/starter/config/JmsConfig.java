@@ -4,6 +4,7 @@ import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Message;
 import java.util.function.BiConsumer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.activemq.broker.BrokerService;
 import org.galatea.starter.utils.jms.FuseJmsListenerContainerFactory;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -87,6 +88,21 @@ public class JmsConfig implements JmsListenerConfigurer {
     // behave differently.
     factory.setMessageConverter(jacksonJmsMessageConverter());
     return factory;
+  }
+
+  /**
+   * Sets up an embedded ActiveMQ broker while disabling jmx.
+   *
+   * @return the broker service
+   * @throws Exception if the broker cannot be created
+   */
+  @Bean
+  public BrokerService broker() throws Exception {
+    BrokerService broker = new BrokerService();
+    broker.setUseJmx(false);
+    broker.setPersistent(false);
+    broker.addConnector("vm://localhost");
+    return broker;
   }
 
   /**
