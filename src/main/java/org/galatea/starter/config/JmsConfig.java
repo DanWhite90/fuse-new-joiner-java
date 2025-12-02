@@ -5,10 +5,12 @@ import jakarta.jms.Message;
 import java.util.function.BiConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.broker.BrokerService;
+import org.galatea.starter.config.graalvm.JmsRuntimeHints;
 import org.galatea.starter.utils.jms.FuseJmsListenerContainerFactory;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.annotation.JmsListenerConfigurer;
 import org.springframework.jms.config.JmsListenerContainerFactory;
@@ -20,6 +22,7 @@ import org.springframework.messaging.handler.annotation.support.DefaultMessageHa
 import org.springframework.messaging.handler.annotation.support.MessageHandlerMethodFactory;
 
 @Slf4j
+@ImportRuntimeHints(JmsRuntimeHints.class)
 @Configuration
 @EnableJms
 public class JmsConfig implements JmsListenerConfigurer {
