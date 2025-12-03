@@ -68,20 +68,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
-<!--      <exclusions>-->
-<!--        &lt;!&ndash; Exclude so we can use log4j instead &ndash;&gt;-->
-<!--        <exclusion>-->
-<!--          <groupId>org.springframework.boot</groupId>-->
-<!--          <artifactId>spring-boot-starter-logging</artifactId>-->
-<!--        </exclusion>-->
-<!--      </exclusions>-->
     </dependency>
-
-    <!-- Use log4j instead of logback -->
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter-log4j2</artifactId>-->
-<!--    </dependency>-->
 
     <dependency>
       <groupId>org.springframework.cloud</groupId>
@@ -474,40 +461,6 @@
           </execution>
         </executions>
       </plugin>
-      <!--			TODO: re-add later for logging -->
-      <!--			<plugin>-->
-      <!--				<groupId>org.codehaus.mojo</groupId>-->
-      <!--				<artifactId>aspectj-maven-plugin</artifactId>-->
-      <!--				<version>1.15.0</version>-->
-      <!--				<executions>-->
-      <!--					<execution>-->
-      <!--						<phase>process-classes</phase>-->
-      <!--						<goals>-->
-      <!--							<goal>compile</goal>-->
-      <!--						</goals>-->
-      <!--					</execution>-->
-      <!--				</executions>-->
-      <!--				<configuration>-->
-      <!--					<source>${java.version}</source>-->
-      <!--					<target>${java.version}</target>-->
-      <!--					<complianceLevel>${java.version}</complianceLevel>-->
-      <!--					<aspectjVersion>${aspectj.version}</aspectjVersion>-->
-      <!--					<showWeaveInfo>true</showWeaveInfo>-->
-      <!--					<aspectLibraries>-->
-      <!--						<aspectLibrary>-->
-      <!--							<groupId>net.sf.aspect4log</groupId>-->
-      <!--							<artifactId>aspect4log</artifactId>-->
-      <!--						</aspectLibrary>-->
-      <!--					</aspectLibraries>-->
-      <!--				</configuration>-->
-      <!--				<dependencies>-->
-      <!--					<dependency>-->
-      <!--						<groupId>org.aspectj</groupId>-->
-      <!--						<artifactId>aspectjtools</artifactId>-->
-      <!--						<version>${aspectj.version}</version>-->
-      <!--					</dependency>-->
-      <!--				</dependencies>-->
-      <!--			</plugin>-->
     </plugins>
   </build>
 

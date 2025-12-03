@@ -246,3 +246,22 @@ Once the application is opened in VisualVM there are several tabs filled with di
     - To install go to Tools -> Plugins, then select the Available Plugins tab. Find "Threads Inspector" in the list of plugins and click install.
 * Sampler - Gives the option to see a more detailed view of CPU and memory usage by the app including a by thread breakdown
 * Profiler - Allows enabling CPU or memory profiling and viewing the results.
+
+## Native Image Configuration
+
+### Build Commands
+
+#### Local Native Compilation (requires GraalVM installed)
+```bash
+mvn -Pnative native:compile
+```
+
+#### Container-based Native Image (no local GraalVM needed)
+```bash
+mvn -Pnative spring-boot:build-image
+```
+
+#### Run the container
+```bash
+docker run -p 8080:8080 fuse-starter-java:0.0.1-SNAPSHOT
+```
