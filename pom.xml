@@ -37,6 +37,7 @@
       **/Application.java
     </sonar.coverage.exclusions>
     <sonar.organization>galatea-associates</sonar.organization>
+    <sonar.projectKey>galatea-associates_fuse-starter-java</sonar.projectKey>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <!-- Allow us to skip Unit Tests only, if need be, with -Dskip.surefire.tests, but retain the skip all tests functionality of -DskipTests -->
     <skipTests>false</skipTests>
@@ -460,6 +461,11 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>4.0.0.4121</version>
       </plugin>
     </plugins>
   </build>
